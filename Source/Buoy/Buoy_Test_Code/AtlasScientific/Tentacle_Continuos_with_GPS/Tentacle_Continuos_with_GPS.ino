@@ -3,9 +3,9 @@
 #include <SoftwareSerial.h>
 #include "Adafruit_FONA.h"
 
-#define APN  "xxxxxxxxxx"  // The APN of your operator
-#define USER "xxxxxxxxxx"  // if your apn doesnt have username just leave it ""
-#define PASS "xxxxxxxxxx"  // if your apn doesnt have password just leave it ""
+#define APN  "wholesale"  // The APN of your operator
+#define USER ""  // if your apn doesnt have username just leave it ""
+#define PASS ""  // if your apn doesnt have password just leave it ""
 #define TOKEN "A1E-4gfwu1P5Vt4Gi6L3m7y5ziXpoRPD52"  
 #define VARIABLE_LABEL_1 "Temperature" 
 #define VARIABLE_LABEL_2 "pH" 
