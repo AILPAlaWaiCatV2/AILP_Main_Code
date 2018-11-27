@@ -1,0 +1,33 @@
+Logic for Differentiating between buoys (ID)
+
+using  ID numbers prior to sending data to make sure node knows where it is coming from
+
+Seperate Channels  
+
+Requirements: (Per Buoy)
+LoRa Transciever x2
+Arduino Uno x2
+NodeMCU x1
+---- Atlas-Scientific ----
+Tentacle shield x1
+Temperature sensor x1
+pH sensor x1
+Conductivity x1
+Dissolved Oxygen x1
+
+
+Buoy 1:
+	Buoy Name: B1
+	Temperature: B1T
+	pH: B1P
+	Conductivity: B1C
+	Dissolved Oxygen: B1D
+Buoy 2:
+	Buoy Name: B2
+	Temperature: B2T
+	pH: B2P
+	Conductivity: B2C
+	Dissolved Oxygen: B2D
+
+ect...
+
