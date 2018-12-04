@@ -1,5 +1,3 @@
-
-
 #include <HTTPSRedirect.h>
 
 #include <UbidotsMicroESP8266.h>
@@ -20,7 +18,7 @@ Ubidots client1(TOKEN);
 
 
 String sendvalue;
-char tempval[7];
+char recVal[9];
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
@@ -33,16 +31,41 @@ void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("*");
   if (Serial.available()){
-     Serial.readBytes(tempval, 6);
-Serial.println( tempval);
-String tempSend(tempval);
-float tempValSend = tempSend.toFloat();
-Serial.println( tempValSend);
-     
-    //Serial.write(tempval);
-  if(tempValSend > 10.00){
-  client1.add(ID1, tempValSend);
-  client1.sendAll();
-    } 
+  Serial.readBytes(recVal, 8);
+
+
+    if(recVal[0] == 'T'){
+    String tempRaw = String(recVal);
+    String tempSend = tempRaw.substring(1,8);
+    float tempValSend = tempSend.toFloat();
+    client1.add(ID1, tempValSend);
+    client1.sendAll();
+    }
+      
+    if(recVal[0] == 'P'){
+    String phRaw = String(recVal);
+    String phSend = phRaw.substring(1,8);
+    float phValSend = phSend.toFloat();
+    client1.add(ID2, phValSend);
+    client1.sendAll();
+    }
+
+    if(recVal[0] == 'D'){
+    String dRaw = String(recVal);
+    String dSend = dRaw.substring(1,8);
+    float dValSend = dSend.toFloat();
+    client1.add(ID1, dValSend);
+    client1.sendAll();
+    }
+    
+    if(recVal[0] == 'C'){
+    String cRaw = String(recVal);
+    String cSend = cRaw.substring(1,8);
+    float cValSend = cSend.toFloat();
+    client1.add(ID1, cValSend);
+    client1.sendAll();
+    }
+
+  
   }
 }

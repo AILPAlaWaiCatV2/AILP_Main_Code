@@ -132,20 +132,19 @@ void loop() {
         Serial.println("no data");          
         break;                                
     }
-
-    buoyNumber();
+    
     
    if(channel_names[channel] == "RTD"){
     float temp = atof(sensordata);
     String tempNumStr = String(temp);
     char tempNumChar[6];
     tempNumStr.toCharArray(tempNumChar, 6);
-    char radiopacketTemp[6] = "     ";
-    for(int i = 0; i <= 4; i++){
+    char radiopacketTemp[7] = "T     ";
+    for(int i = 1; i <= 5; i++){
       radiopacketTemp[i] = tempNumChar[i];
     }
-    radiopacketTemp[5] = 0;
-    rf95.send(radiopacketTemp, 6);
+    radiopacketTemp[6] = 0;
+    rf95.send(radiopacketTemp, 7);
    }
 
    
@@ -154,12 +153,12 @@ void loop() {
     String disNumStr = String (dissolved);
     char disNumChar[6];
     disNumStr.toCharArray(disNumChar, 6);
-    char radiopacketDis[6] = "     ";
-    for(int x = 0; x<=4; x++){
+    char radiopacketDis[7] = "D     ";
+    for(int x = 1; x<=5; x++){
       radiopacketDis[x] = disNumChar[x];
     }
-    radiopacketDis[5] = 0;
-    rf95.send(radiopacketDis, 6);
+    radiopacketDis[6] = 0;
+    rf95.send(radiopacketDis, 7);
    }
 
    
@@ -168,12 +167,12 @@ void loop() {
     String pHNumStr = String(pH);
     char pHNumChar[6];
     pHNumStr.toCharArray(pHNumChar, 6);
-    char radiopacketpH[6] = "     ";
-    for(int y = 0; y <= 4; y++){
+    char radiopacketpH[7] = "P     ";
+    for(int y = 1; y <= 5; y++){
       radiopacketpH[y] = pHNumChar[y];
     }
-    radiopacketpH[5] = 0;
-    rf95.send(radiopacketpH, 6);
+    radiopacketpH[6] = 0;
+    rf95.send(radiopacketpH, 7);
    }
 
    
@@ -182,13 +181,14 @@ void loop() {
     String conNumStr = String(conduct);
     char conNumChar[6];
     conNumStr.toCharArray(conNumChar, 6);
-    char radiopacketCon[6] = "     ";
-    for(int c = 0; c <= 4; c++){
+    char radiopacketCon[7] = "C     ";
+    for(int c = 1; c <= 5; c++){
       radiopacketCon[c] = conNumChar[c];
     }
-    radiopacketCon[5] = 0;
+    radiopacketCon[6] = 0;
     rf95.send(radiopacketCon, 6);
    }
+/*
 
      float latitude, longitude;
 
@@ -197,35 +197,28 @@ void loop() {
      String latNumStr = String(latitude);
      char latNumChar[32];
      latNumStr.toCharArray(latNumChar, 32);
-     char radiopacketLat[32];
-     for(int lat = 0; lat <= 30; lat++){
+     char radiopacketLat[33];
+     radiopacketLat[0] = 'X';
+     for(int lat = 1; lat <= 31; lat++){
       radiopacketLat[lat] = latNumChar[lat];
      }
-     radiopacketLat[31] = 0;
-     rf95.send(radiopacketLat, 32);
+     radiopacketLat[32] = 0;
+     rf95.send(radiopacketLat, 33);
 
      String lonNumStr = String(longitude);
      char lonNumChar[32];
      lonNumStr.toCharArray(lonNumChar, 32);
-     char radiopacketLon[32];
-     for(int lon = 0; lon <= 30; lon++){
+     char radiopacketLon[33];
+     radiopacketLon[0] = 'Y';
+     for(int lon = 1; lon <= 31; lon++){
       radiopacketLon[lon] = lonNumChar[lon];
      }
-     radiopacketLon[31] = 0;
-     rf95.send(radiopacketLon, 32);
+     radiopacketLon[32] = 0;
+     rf95.send(radiopacketLon, 33);
+     */
      
-     
-     // packet size to send over needs to be found 
    
   } // for loop 
    
 
 } // void loop
-
-
-void buoyNumber(){
-  char radiopacketBN[2];
-  radiopacketBN[0] = 'a'; // change number based on buoy character assigned
-  radiopacketBN[1] = 0;
-  rf95.send(radiopacketBN, 2);
-}
