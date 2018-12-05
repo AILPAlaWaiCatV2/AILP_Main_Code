@@ -40,6 +40,8 @@ SoftwareSerial *fonaSerial = &fonaSS;
 
 Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
 
+
+
 void setup() {                        
   Wire.begin();    
   Serial.begin(9600);
@@ -79,10 +81,10 @@ void setup() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
- 
-int16_t packetnum = 0;  // packet counter, we increment per xmission
+ int16_t packetnum = 0;  // packet counter, we increment per xmission
 
    fona.enableGPS(true);
+
 }
 
 
@@ -115,23 +117,6 @@ void loop() {
       }
     }
 
-    switch (code) {                        
-      case 1:                               
-        Serial.println(sensordata);      
-        break; 
-                                      
-      case 2:                              
-        Serial.println("command failed");   
-        break;                                 
-
-      case 254:                             
-        Serial.println("circuit not ready");
-        break;                                 
-
-      case 255:                              
-        Serial.println("no data");          
-        break;                                
-    }
     
     
    if(channel_names[channel] == "RTD"){
@@ -141,10 +126,11 @@ void loop() {
     tempNumStr.toCharArray(tempNumChar, 6);
     char radiopacketTemp[7] = "T     ";
     for(int i = 1; i <= 5; i++){
-      radiopacketTemp[i] = tempNumChar[i];
+      radiopacketTemp[i] = tempNumChar[i - 1];
     }
     radiopacketTemp[6] = 0;
     rf95.send(radiopacketTemp, 7);
+    Serial.println(radiopacketTemp);
    }
 
    
@@ -155,10 +141,11 @@ void loop() {
     disNumStr.toCharArray(disNumChar, 6);
     char radiopacketDis[7] = "D     ";
     for(int x = 1; x<=5; x++){
-      radiopacketDis[x] = disNumChar[x];
+      radiopacketDis[x] = disNumChar[x - 1];
     }
     radiopacketDis[6] = 0;
     rf95.send(radiopacketDis, 7);
+    Serial.println(radiopacketDis);
    }
 
    
@@ -169,10 +156,11 @@ void loop() {
     pHNumStr.toCharArray(pHNumChar, 6);
     char radiopacketpH[7] = "P     ";
     for(int y = 1; y <= 5; y++){
-      radiopacketpH[y] = pHNumChar[y];
+      radiopacketpH[y] = pHNumChar[y - 1];
     }
     radiopacketpH[6] = 0;
     rf95.send(radiopacketpH, 7);
+    Serial.println(radiopacketpH);
    }
 
    
@@ -183,15 +171,14 @@ void loop() {
     conNumStr.toCharArray(conNumChar, 6);
     char radiopacketCon[7] = "C     ";
     for(int c = 1; c <= 5; c++){
-      radiopacketCon[c] = conNumChar[c];
+      radiopacketCon[c] = conNumChar[c - 1];
     }
     radiopacketCon[6] = 0;
     rf95.send(radiopacketCon, 6);
+    Serial.println(radiopacketCon);
    }
-/*
 
      float latitude, longitude;
-
      fona.getGPS(&latitude, &longitude);
      
      String latNumStr = String(latitude);
@@ -204,7 +191,6 @@ void loop() {
      }
      radiopacketLat[32] = 0;
      rf95.send(radiopacketLat, 33);
-
      String lonNumStr = String(longitude);
      char lonNumChar[32];
      lonNumStr.toCharArray(lonNumChar, 32);
@@ -215,7 +201,6 @@ void loop() {
      }
      radiopacketLon[32] = 0;
      rf95.send(radiopacketLon, 33);
-     */
      
    
   } // for loop 
