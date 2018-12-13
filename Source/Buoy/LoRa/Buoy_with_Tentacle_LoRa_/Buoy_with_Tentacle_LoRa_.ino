@@ -1,21 +1,35 @@
+/**
+ * Created By: Shane Matsushima 
+ * Date: 12/5/2018
+ * For: Data Sending from Buoy (Advanced Innovation and Leadership Project)
+ * Description:
+ *  Used for Sending data from the Buoy to the main hub where the NodeMCU is located
+ *  Data being transmited consists of pH, temperature, conductivity, and dissolved oxygen
+ *  The use of a LoRa, Tentacle Shield, and Arduino Uno is used for this code
+ *  Please check the gitHub for partnering codes 
+ */
+
+
+//Libraries needed for this code
 #include <Wire.h> 
 #include <SPI.h>
 #include <RH_RF95.h>
 #include <SoftwareSerial.h>
 #include "Adafruit_FONA.h"
 
+//Declaration of pins used for the LoRa 
 #define RFM95_CS 4
 #define RFM95_RST 2
 #define RFM95_INT 3
-
+/*
 // standard pins for the shield, adjust as necessary
-#define FONA_RX 2
-#define FONA_TX 3
-#define FONA_RST 4
-
-
-
+#define FONA_RX 7
+#define FONA_TX 6
+#define FONA_RST 8
+*/
+//check LED to make sure data is being sent
 #define LED 13
+
 
 char sensordata[30];
 byte sensor_bytes_received = 0; 
@@ -35,22 +49,24 @@ char *channel_names[] = {"RTD", "DO", "PH", "EC"};
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
+/*
 SoftwareSerial fonaSS = SoftwareSerial(FONA_TX, FONA_RX);
 SoftwareSerial *fonaSerial = &fonaSS;
 
 Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
+*/
 
 
-
-void setup() {                        
+void setup() 
+{ 
+                         
   Wire.begin();    
   Serial.begin(9600);
+  
   pinMode(LED, OUTPUT);
    pinMode(RFM95_RST, OUTPUT);
+   
   digitalWrite(RFM95_RST, HIGH);
- 
- // while (!Serial); // remove if not tethered to computer (looks for serial monitor to open)
-  Serial.begin(9600);
   delay(100);
  
   Serial.println("Arduino LoRa TX Test!");
@@ -61,14 +77,16 @@ void setup() {
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
  
-  while (!rf95.init()) {
+  while (!rf95.init()) 
+  {
     Serial.println("LoRa radio init failed");
     while (1);
   }
   Serial.println("LoRa radio init OK!");
  
   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
-  if (!rf95.setFrequency(RF95_FREQ)) {
+  if (!rf95.setFrequency(RF95_FREQ)) 
+  {
     Serial.println("setFrequency failed");
     while (1);
   }
@@ -81,16 +99,21 @@ void setup() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
- int16_t packetnum = 0;  // packet counter, we increment per xmission
+ // packet counter, we increment per xmission
+ int16_t packetnum = 0; 
 
-   fona.enableGPS(true);
+  //enables the GPS on the FONA 
+  //fona.enableGPS(true);
 
 }
 
 
 
 void loop() {
-  for (int channel = 0; channel < TOTAL_CIRCUITS; channel++) {   
+
+  //cycles through I2C channels grabbing sensor data from the Tentacle
+  for (int channel = 0; channel < TOTAL_CIRCUITS; channel++) 
+  {   
 
     Wire.beginTransmission(channel_ids[channel]);
     Wire.write('r');               
@@ -104,48 +127,59 @@ void loop() {
     Wire.requestFrom(channel_ids[channel], 48, 1);  
     code = Wire.read();
 
-    while (Wire.available()) {        
+    while (Wire.available()) 
+    {        
       in_char = Wire.read();           
 
-      if (in_char == 0) {        
+      if (in_char == 0) 
+      {        
         Wire.endTransmission();       
         break;                 
       }
-      else {
+      else 
+      {
         sensordata[sensor_bytes_received] = in_char;      
         sensor_bytes_received++;
       }
     }
 
+    //checks for channel being called and sending the data received from the designated sensor through the LoRa
     
-    
-   if(channel_names[channel] == "RTD"){
-    float temp = atof(sensordata);
-    String tempNumStr = String(temp);
-    char tempNumChar[6];
-    tempNumStr.toCharArray(tempNumChar, 6);
-    char radiopacketTemp[7] = "T     ";
-    for(int i = 1; i <= 5; i++){
-      radiopacketTemp[i] = tempNumChar[i - 1];
-    }
-    radiopacketTemp[6] = 0;
-    rf95.send(radiopacketTemp, 7);
-    Serial.println(radiopacketTemp);
+   if(channel_names[channel] == "RTD")
+   {
+      float temp = atof(sensordata);
+      String tempNumStr = String(temp);
+      char tempNumChar[6];
+      tempNumStr.toCharArray(tempNumChar, 6);
+      char radiopacketTemp[7] = "T     ";
+      
+      for(int i = 1; i <= 5; i++)
+      {
+        radiopacketTemp[i] = tempNumChar[i - 1];
+      }
+      
+      radiopacketTemp[6] = 0;
+      rf95.send(radiopacketTemp, 7);
+      Serial.println(radiopacketTemp);
    }
 
    
-   if(channel_names[channel] == "DO"){
-    float dissolved = atof(sensordata);
-    String disNumStr = String (dissolved);
-    char disNumChar[6];
-    disNumStr.toCharArray(disNumChar, 6);
-    char radiopacketDis[7] = "D     ";
-    for(int x = 1; x<=5; x++){
-      radiopacketDis[x] = disNumChar[x - 1];
-    }
-    radiopacketDis[6] = 0;
-    rf95.send(radiopacketDis, 7);
-    Serial.println(radiopacketDis);
+   if(channel_names[channel] == "DO")
+   {
+      float dissolved = atof(sensordata);
+      String disNumStr = String (dissolved);
+      char disNumChar[6];
+      disNumStr.toCharArray(disNumChar, 6);
+      char radiopacketDis[7] = "D     ";
+      
+      for(int x = 1; x<=5; x++)
+      {
+        radiopacketDis[x] = disNumChar[x - 1];
+      }
+      
+      radiopacketDis[6] = 0;
+      rf95.send(radiopacketDis, 7);
+      Serial.println(radiopacketDis);
    }
 
    
@@ -178,6 +212,9 @@ void loop() {
     Serial.println(radiopacketCon);
    }
 
+/*
+   //GPS grabbing location and sending over Lora
+
      float latitude, longitude;
      fona.getGPS(&latitude, &longitude);
      
@@ -201,7 +238,7 @@ void loop() {
      }
      radiopacketLon[32] = 0;
      rf95.send(radiopacketLon, 33);
-     
+     */
    
   } // for loop 
    

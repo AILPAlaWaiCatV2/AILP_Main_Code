@@ -32,13 +32,13 @@ void loop() {
   //Serial.println("*");
   if (Serial.available()){
   Serial.readBytes(recVal, 8);
-
+  Serial.println(recVal);
 
     if(recVal[0] == 'T'){
     String tempRaw = String(recVal);
     String tempSend = tempRaw.substring(1,8);
     float tempValSend = tempSend.toFloat();
-    Serial.println(tempvalSend);
+    Serial.println(tempValSend);
     client1.add(ID1, tempValSend);
     client1.sendAll();
     }

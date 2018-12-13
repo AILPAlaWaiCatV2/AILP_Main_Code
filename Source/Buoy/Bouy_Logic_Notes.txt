@@ -31,3 +31,9 @@ Buoy 2:
 
 ect...
 
+
+Buoy dimentions:
+5" diameter
+6.5" height
+3 Buoys being used
+4 sensors on each
