@@ -4,8 +4,3 @@ The main objective of this project is to create an autonomous catamaran that wil
 
 This is one of many projects that is monitoring the Ala Wai watershed. This project is helping the group of scientists, teachers, and students apart of the [Na Wai 'Ekolu](https://www.nawaiekolu.org/). This overarching project is to inspire and get citixen research out there to create a database for watershed helth and even watershed biodiversity. This data collecting project will be used along multiple areas on the Ala Wai to get a better understanding on the change in enviorment throught the island.
 
-## Getting Started
-This section describes the nmaterials and software needed to create this project. These are just the basic needs to create the temperature collecting monitoring system. Other software and sensors can be added if needed. 
-
-### Materials Needed
-These are the supplies needed to complete this project. 
