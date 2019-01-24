@@ -47,7 +47,7 @@ void loop() {
     String phRaw = String(recVal);
     String phSend = phRaw.substring(1,8);
     float phValSend = phSend.toFloat();
-    Serial.println(phValSend);
+    //Serial.println(phValSend);
     client1.add(ID2, phValSend);
     client1.sendAll();
     }
@@ -56,8 +56,8 @@ void loop() {
     String dRaw = String(recVal);
     String dSend = dRaw.substring(1,8);
     float dValSend = dSend.toFloat();
-    Serial.println(dValSend);
-    client1.add(ID1, dValSend);
+    //Serial.println(dValSend);
+    client1.add(ID4, dValSend);
     client1.sendAll();
     }
     
@@ -65,7 +65,7 @@ void loop() {
     String cRaw = String(recVal);
     String cSend = cRaw.substring(1,8);
     float cValSend = cSend.toFloat();
-    client1.add(ID1, cValSend);
+    client1.add(ID3, cValSend);
     client1.sendAll();
     }
 

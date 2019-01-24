@@ -15,7 +15,7 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 #include <SoftwareSerial.h>
-#include "Adafruit_FONA.h"
+#include <TinyGPS++.h>
 
 //Declaration of pins used for the LoRa 
 #define RFM95_CS 4
@@ -30,6 +30,9 @@
 //check LED to make sure data is being sent
 #define LED 13
 
+
+static const int RXPin = 4, TXPin = 3;
+static const uint32_t GPSBaud = 9600;
 
 char sensordata[30];
 byte sensor_bytes_received = 0; 
@@ -49,13 +52,11 @@ char *channel_names[] = {"RTD", "DO", "PH", "EC"};
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-/*
-SoftwareSerial fonaSS = SoftwareSerial(FONA_TX, FONA_RX);
-SoftwareSerial *fonaSerial = &fonaSS;
+// The TinyGPS++ object
+TinyGPSPlus gps;
 
-Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
-*/
-
+// The serial connection to the GPS device
+SoftwareSerial gpsSerial(RXPin, TXPin);
 
 void setup() 
 { 
@@ -102,8 +103,7 @@ void setup()
  // packet counter, we increment per xmission
  int16_t packetnum = 0; 
 
-  //enables the GPS on the FONA 
-  //fona.enableGPS(true);
+  gpsSerial.begin(GPSBaud);
 
 }
 
@@ -212,35 +212,51 @@ void loop() {
     Serial.println(radiopacketCon);
    }
 
-/*
-   //GPS grabbing location and sending over Lora
-
-     float latitude, longitude;
-     fona.getGPS(&latitude, &longitude);
-     
-     String latNumStr = String(latitude);
-     char latNumChar[32];
-     latNumStr.toCharArray(latNumChar, 32);
-     char radiopacketLat[33];
-     radiopacketLat[0] = 'X';
-     for(int lat = 1; lat <= 31; lat++){
-      radiopacketLat[lat] = latNumChar[lat];
-     }
-     radiopacketLat[32] = 0;
-     rf95.send(radiopacketLat, 33);
-     String lonNumStr = String(longitude);
-     char lonNumChar[32];
-     lonNumStr.toCharArray(lonNumChar, 32);
-     char radiopacketLon[33];
-     radiopacketLon[0] = 'Y';
-     for(int lon = 1; lon <= 31; lon++){
-      radiopacketLon[lon] = lonNumChar[lon];
-     }
-     radiopacketLon[32] = 0;
-     rf95.send(radiopacketLon, 33);
-     */
    
   } // for loop 
    
 
 } // void loop
+
+float getGPS()
+{
+  gps.encode(gpsSerial.read());
+    if (gps.location.isUpdated()){
+      String latNumStr = String(gps.location.lat(), 6);
+      char latNumChar [11];
+      latNumStr.toCharArray(latNumChar, 11);
+      char radiopacketLat[12] = "X         "
+      for(int l = 1; l <= 11; l++){
+        radiopacketLat[l] = latNumChar[l - 1];
+      }
+      radiopacketLat[11] = 0;
+      rf95.send(radiopacketLat, 12);
+      Serial.println(radiopacketLat);
+    }
+}
+
+float sendLat(){
+        String latNumStr = String(gps.location.lat(), 6);
+      char latNumChar [11];
+      latNumStr.toCharArray(latNumChar, 11);
+      char radiopacketLat[12] = "X         "
+      for(int l = 1; l <= 11; l++){
+        radiopacketLat[l] = latNumChar[l - 1];
+      }
+      radiopacketLat[11] = 0;
+      rf95.send(radiopacketLat, 12);
+      Serial.println(radiopacketLat);
+}
+
+float sendLon(){
+      String lngNumStr = String(gps.location.lng(), 6);
+      char lngNumChar [11];
+      lngNumStr.toCharArray(lngNumChar, 11);
+      char radiopacketLng[12] = "Y         "
+      for(int l = 1; l <= 11; l++){
+        radiopacketLng[l] = lngNumChar[l - 1];
+      }
+      radiopacketLng[11] = 0;
+      rf95.send(radiopacketLang, 12);
+      Serial.println(radiopacketLng);
+}
