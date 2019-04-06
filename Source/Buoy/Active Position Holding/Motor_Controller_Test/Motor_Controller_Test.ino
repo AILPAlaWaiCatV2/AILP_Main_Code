@@ -22,19 +22,20 @@
 #define RC_CH3_INPUT  A2
 #define RC_CH4_INPUT  A3
 
+
 //motor throttle
-int enA = 3;
-int in1 = 2;
-int in2 = 1;
+int pwm1 = 5;
+int in1 = 8;
+int in2 = 7;
 
 //motor rotate
-int enB = 5;
-int in3 = 7;
-int in4 = 6;
+int pwm2 = 6;
+int in3 = 9;
+int in4 = 4;
 
 uint16_t rc_values[RC_NUM_CHANNELS];
 uint32_t rc_start[RC_NUM_CHANNELS];
-volatile uint16_t rc_shared[RC_NUM_CHANNELS];
+uint16_t rc_shared[RC_NUM_CHANNELS];
 
 void rc_read_values() {
   noInterrupts();
@@ -89,8 +90,9 @@ void setup() {
   enableInterrupt(RC_CH3_INPUT, calc_ch3, CHANGE);
   enableInterrupt(RC_CH4_INPUT, calc_ch4, CHANGE);
 
-  pinMode(enA, OUTPUT);
-  pinMode(enB, OUTPUT);
+  pinMode(pwm1, OUTPUT);
+  pinMode(pwm2, OUTPUT);
+  
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
@@ -98,49 +100,49 @@ void setup() {
 }
 
 void loop() {
+int rotPower = constrain(abs(map(rc_values[RC_CH1], 980, 2000, -255, 255)), 0, 255);
+int throtPower = constrain(abs(map(rc_values[RC_CH2], 980, 2000, -255, 255)), 0, 255);
   rc_read_values();
-
+  Serial.print("rotPower:"); Serial.print(rotPower);
   Serial.print("CH1:"); Serial.print(rc_values[RC_CH1]); Serial.print("\t");
   Serial.print("CH2:"); Serial.print(rc_values[RC_CH2]); Serial.print("\t");
   Serial.print("CH3:"); Serial.print(rc_values[RC_CH3]); Serial.print("\t");
   Serial.print("CH4:"); Serial.print(rc_values[RC_CH4]); Serial.print("\t");
   Serial.print("Rotate Direction: ");
 
-int rotPower = abs(map(rc_values[RC_CH1], 980, 2000, -255, 255));
-int throtPower = abs(map(rc_values[RC_CH2], 980, 2000, -255, 255));
 
 if(rc_values[RC_CH1] < 1420){
   rotR();
-  analogWrite(enB, rotPower);
+  analogWrite(pwm2, rotPower);
   Serial.print("Clockwise");
 }
 else if(rc_values[RC_CH1] > 1580){
   rotF();
-  analogWrite(enB, rotPower);
+  analogWrite(pwm2, rotPower);
   Serial.print("CounterClockwise");
 }
 else{
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
-  analogWrite(enB, 0);
+  analogWrite(pwm2, 0);
 }
 
 Serial.print("\t"); Serial.print("Throttle Direction: ");
 
 if(rc_values[RC_CH2] < 1420){
-  rotR();
-  analogWrite(enA, throtPower);
+  throtR();
+  analogWrite(pwm1, throtPower);
   Serial.print("Reverse");
 }
 else if(rc_values[RC_CH2] > 1580){
-  rotF();
-  analogWrite(enA, throtPower);
+  throtF();
+  analogWrite(pwm1, throtPower);
   Serial.print("Forward");
 }
 else{
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
-  analogWrite(enA, 0);
+  analogWrite(pwm1, 0);
 }
 Serial.println();
 }
