@@ -105,6 +105,9 @@ double coordDif(double desireX, double desireY, double actualX, double actualY){
   
 }
 
+/*
+ * This function resets the data needed to travel so that the data being sent out is new and up to date 
+ */
 void Reset(){
   travelWest = 0;
   travelEast = 0;
@@ -112,6 +115,9 @@ void Reset(){
   travelNorth = 0;
 }
 
+/*
+ * This function allows the program to grab specific coordinates from the user input in the serial monitor. The user must place the GPS coordinates accordingly based on the How To Use that is displayed
+ */
 double getCoord(String coordinates){
   coordinates.toCharArray(coordArray, 65);
   valPosition = strtok(coordArray, delimiter);
@@ -136,8 +142,10 @@ double getCoord(String coordinates){
   
 }
 
+/*
+ * This function is run once at the beginning of the program. This is where the program alerts the user on how to utilize this program. 
+ */
 void setup() {
-  // put your setup code here, to run once:
 Serial.begin(9600);
 Serial.println("This code showcases the difference in coordinated from the GPS module. It will display the direction the actual Device is based on the desired coordinate");
 Serial.println("Direction from desire: distance away");
@@ -151,8 +159,10 @@ Serial.println("------Example------");
 Serial.println("24.38 34.28 54.56 48.97");
 }
 
+/*
+ * THis function allows the user to run the program continously. This portion grabs data that the user inputs in the serial monitor and uses the function from before to print a direction and distance needed to travel. 
+ */
 void loop() {
-  // put your main code here, to run repeatedly:
   if(Serial.available()){
     String grabData = Serial.readString();
     getCoord(grabData);
