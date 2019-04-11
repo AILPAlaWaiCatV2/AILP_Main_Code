@@ -136,11 +136,15 @@ void setup() {
  * This is the main portion of the code that runs infinetly unless told otherwise
  */
 void loop() {
-  //maps the location of the joystick to the pwm output that should be sent to the motor
+/*
+ * maps the location of the joystick to the pwm output that should be sent to the motor
+ */
   int rotPower = constrain(abs(map(rc_values[RC_CH1], 980, 2000, -255, 255)), 0, 255);
   int throtPower = constrain(abs(map(rc_values[RC_CH2], 980, 2000, -255, 255)), 0, 255);
-
-  //read the RC receiver and prints out the position of the joystick in the serial monitor
+/*
+ * read the RC receiver and prints out the position of the joystick in the serial monitor
+ */
+  
   rc_read_values();
   Serial.print("rotPower:"); Serial.print(rotPower);
   Serial.print("CH1:"); Serial.print(rc_values[RC_CH1]); Serial.print("\t");
@@ -148,8 +152,9 @@ void loop() {
   Serial.print("CH3:"); Serial.print(rc_values[RC_CH3]); Serial.print("\t");
   Serial.print("CH4:"); Serial.print(rc_values[RC_CH4]); Serial.print("\t");
   Serial.print("Rotate Direction: ");
-
-//figures out direction of the joysticks and runs the motors in the appropriate direction based on joystick position
+/*
+ * figures out direction of the joysticks and runs the motors in the appropriate direction based on joystick position
+ */
 if(rc_values[RC_CH1] < 1420){
   rotR();
   analogWrite(pwm2, rotPower);

@@ -19,8 +19,6 @@ int i = 0;
  * These char are declared for the seperation of user inputs for desire and actual GPS
  */
 char coordArray[100];
-char delimiter = 32;
-char* valPosition;
 
 /*
  * Final variables used for difference math
@@ -41,10 +39,10 @@ double travelSouth;
 /*
  * Variables for inputing into the coordDif function
  */
-double desireX;
-double desireY;
-double actualX;
-double actualY;
+float desireX;
+float desireY;
+float actualX;
+float actualY;
 
 /*
  * String array used as place holder for user input desire and actual coordinates 
@@ -54,10 +52,13 @@ String splited[4];
 /*
  * String variables of desired and actual GPS coordinates
  */
+String coordinate[4] = {"stringDesireX", "stringDesireY", "stringActualX", "stringActualY"};
+/*
 String stringDesireX;
 String stringDesireY;
 String stringActualX;
 String stringActualY;
+*/
 
 /*
  * This function takes the desired and actual gps coordinates and returns the difference based compass and feet 
@@ -70,39 +71,48 @@ double coordDif(double desireX, double desireY, double actualX, double actualY){
   totalChangeFeetX = totalChangeRawX/coordToFt;
   totalChangeFeetY = totalChangeRawY/coordToFt;
 
+  Serial.println("Direction:");
+
   if(totalChangeRawX > 0){
     Serial.print("E: ");
-    Serial.print(totalChangeFeetX);
+    Serial.print(totalChangeFeetX, 10);
     Serial.print(", ");
     
     travelEast = totalChangeFeetX;
-    return travelEast;
+    
   }
-  if(totalChangeRawX < 0){
+  
+   else if(totalChangeRawX < 0){
     Serial.print("W: ");
-    Serial.print(abs(totalChangeFeetX));
+    Serial.print(abs(totalChangeFeetX), 10);
     Serial.print(", ");
-
+    
     travelWest = abs(totalChangeFeetX);
-    return travelWest;
+    
   }
+  
   if(totalChangeRawY > 0){
     Serial.print("S: ");
-    Serial.print(totalChangeFeetY);
+    Serial.print(totalChangeFeetY, 10);
     Serial.println();
 
     travelSouth = totalChangeFeetY;
-    return travelSouth;
+    
   }
+  
   if(totalChangeRawY < 0){
     Serial.print("N: ");
-    Serial.print(abs(totalChangeFeetY));
+    Serial.print(abs(totalChangeFeetY), 10);
     Serial.println();
 
     travelNorth = abs(totalChangeFeetY);
-    return travelNorth;
+    
   }
-  
+
+  return travelEast;
+  return travelWest;
+  return travelSouth;
+  return travelNorth;
 }
 
 /*
@@ -120,20 +130,25 @@ void Reset(){
  */
 double getCoord(String coordinates){
   coordinates.toCharArray(coordArray, 65);
-  valPosition = strtok(coordArray, delimiter);
-  while(valPosition != NULL){
-    splited[i] = valPosition;
-    i++;
-  }
-  stringDesireX = splited[0];
-  stringDesireY = splited[1];
-  stringActualX = splited[2];
-  stringActualY = splited[3];
   
-  desireX = stringDesireX.toDouble();
-  desireY = stringDesireY.toDouble();
-  actualX = stringActualX.toDouble();
-  actualY = stringActualY.toDouble();
+  int x =0;
+  for(int i = 0; i < 4; i++){
+    coordinate[i] = "";
+    }
+  for(int i = 0; i < 65; i++){
+    if(coordArray[i] == ' '){
+     x++;
+    }
+    else{
+      coordinate[x]+=coordArray[i];
+    }
+  }
+  
+  
+  desireX = coordinate[0].toFloat();
+  desireY = coordinate[1].toFloat();
+  actualX = coordinate[2].toFloat();
+  actualY = coordinate[3].toFloat();
   
   return desireX;
   return desireY;
@@ -160,12 +175,20 @@ Serial.println("24.38 34.28 54.56 48.97");
 }
 
 /*
- * THis function allows the user to run the program continously. This portion grabs data that the user inputs in the serial monitor and uses the function from before to print a direction and distance needed to travel. 
+ * This function allows the user to run the program continously. This portion grabs data that the user inputs in the serial monitor and uses the function from before to print a direction and distance needed to travel. 
  */
 void loop() {
   if(Serial.available()){
     String grabData = Serial.readString();
+    Serial.println(grabData);
+    
     getCoord(grabData);
+    Serial.println("Return:");
+    Serial.print("DesiredX:");Serial.print(desireX, 5);Serial.print("\t");
+    Serial.print("DesiredY:");Serial.print(desireY, 5);Serial.print("\t");
+    Serial.print("ActualX:");Serial.print(actualX, 5);Serial.print("\t");
+    Serial.print("ActualY:");Serial.print(actualY, 5);Serial.print("\t");Serial.println();
+    
     coordDif(desireX, desireY, actualX, actualY);
     Reset();
     
