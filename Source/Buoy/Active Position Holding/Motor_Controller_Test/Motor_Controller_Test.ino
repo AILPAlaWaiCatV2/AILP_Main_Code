@@ -10,6 +10,11 @@
 #include <EnableInterrupt.h>
 
 /*
+ * This is the library used for controlling the thrusting motor via ESC
+ */
+#include <Servo.h>
+
+/*
  *These defines are used to declare the port speed and channel number for the Arduino and RC Receiver 
  */
 #define SERIAL_PORT_SPEED 57600
@@ -33,12 +38,9 @@
 
 
 /*
- * --Motor Throttle--
- * These integers are declared for the pins used to control the throttle motor on the motor controller
+ * MotorThrust Pin
  */
-int pwm1 = 5;
-int in1 = 8;
-int in2 = 7;
+ #define MOTOR_THRUST_PIN 11
 
 /*
  * --Motor Rotate--
@@ -54,6 +56,11 @@ int in4 = 4;
 uint16_t rc_values[RC_NUM_CHANNELS];
 uint32_t rc_start[RC_NUM_CHANNELS];
 uint16_t rc_shared[RC_NUM_CHANNELS];
+
+/*
+ * Attaching the thruster motor to the Servo Class
+ */
+Servo motorThrust;
 
 /*
  * This function grabs the value of the RC controller from the receiver
@@ -97,16 +104,6 @@ void rotR(){
   digitalWrite(in4, LOW);
 }
 
-void throtF(){
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
-}
-
-void throtR(){
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
-}
-
 /*
  * This runs once before the full program starts and allocates what each pin is doing
  */
@@ -123,13 +120,12 @@ void setup() {
   enableInterrupt(RC_CH3_INPUT, calc_ch3, CHANGE);
   enableInterrupt(RC_CH4_INPUT, calc_ch4, CHANGE);
 
-  pinMode(pwm1, OUTPUT);
   pinMode(pwm2, OUTPUT);
   
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+
+  motorThrust.attach(MOTOR_THRUST_PIN);
 }
 
 /*
@@ -140,7 +136,7 @@ void loop() {
  * maps the location of the joystick to the pwm output that should be sent to the motor
  */
   int rotPower = constrain(abs(map(rc_values[RC_CH1], 980, 2000, -255, 255)), 0, 255);
-  int throtPower = constrain(abs(map(rc_values[RC_CH2], 980, 2000, -255, 255)), 0, 255);
+  int throtPower = map(rc_values[RC_CH2], 980, 2000, 1000,2000);
 /*
  * read the RC receiver and prints out the position of the joystick in the serial monitor
  */
@@ -173,20 +169,14 @@ else{
 
 Serial.print("\t"); Serial.print("Throttle Direction: ");
 
-if(rc_values[RC_CH2] < 1420){
-  throtR();
-  analogWrite(pwm1, throtPower);
+if(rc_values[RC_CH2] < 1500){
+  motorThrust.write(throtPower);
   Serial.print("Reverse");
 }
-else if(rc_values[RC_CH2] > 1580){
-  throtF();
-  analogWrite(pwm1, throtPower);
+else if(rc_values[RC_CH2] > 1500){
+  motorThrust.write(throtPower);
   Serial.print("Forward");
 }
-else{
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW);
-  analogWrite(pwm1, 0);
-}
+
 Serial.println();
 }
