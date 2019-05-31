@@ -18,4 +18,5 @@ void loop()
   while (ss.available() > 0){
     Serial.write(ss.read());
   }
+  Serial.println("No Serial");
 }

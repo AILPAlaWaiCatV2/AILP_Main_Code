@@ -36,19 +36,13 @@
 #define RC_CH3_INPUT  A2
 #define RC_CH4_INPUT  A3
 
+#define MOTOR_THRUST_PIN 11
 
-/*
- * MotorThrust Pin
- */
- #define MOTOR_THRUST_PIN 11
 
-/*
- * --Motor Rotate--
- * These integers are declared for the pins used to control the azimuth motor on the motor controller
- */
-int pwm2 = 6;
-int in3 = 9;
-int in4 = 4;
+#define pwm 6
+#define A1 4
+#define B1 9
+
 
 /*
  * These integers are declared as place holderes for the timing for the interrupts for the RC controller based on the channel
@@ -94,14 +88,23 @@ void calc_ch4() { calc_input(RC_CH4, RC_CH4_INPUT); }
 /*
  * These functions are used to control the direction of the motor by using the digital pins on the Arduino
  */
-void rotF(){
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+ void motor(int pin, int input){
+  analogWrite(pin, input);
 }
 
-void rotR(){
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
+void CW(){
+  digitalWrite(A1, LOW);
+  digitalWrite(B1, HIGH);
+}
+
+void CCW(){
+  digitalWrite(A1, HIGH);
+  digitalWrite(B1, LOW);
+}
+
+void brake(){
+  digitalWrite(A1, LOW);
+  digitalWrite(B1, LOW);
 }
 
 /*
@@ -120,12 +123,12 @@ void setup() {
   enableInterrupt(RC_CH3_INPUT, calc_ch3, CHANGE);
   enableInterrupt(RC_CH4_INPUT, calc_ch4, CHANGE);
 
-  pinMode(pwm2, OUTPUT);
-  
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
 
   motorThrust.attach(MOTOR_THRUST_PIN);
+
+  pinMode(pwm, OUTPUT);
+  pinMode(A1, OUTPUT);
+  pinMode(B1, OUTPUT);
 }
 
 /*
@@ -151,32 +154,34 @@ void loop() {
 /*
  * figures out direction of the joysticks and runs the motors in the appropriate direction based on joystick position
  */
-if(rc_values[RC_CH1] < 1420){
-  rotR();
-  analogWrite(pwm2, rotPower);
-  Serial.print("Clockwise");
+
+ if(rc_values[RC_CH1 ]< 1430){
+  CW();
+  motor(pwm, rotPower);
+  Serial.print("CW");
 }
-else if(rc_values[RC_CH1] > 1580){
-  rotF();
-  analogWrite(pwm2, rotPower);
-  Serial.print("CounterClockwise");
+else if(rc_values[RC_CH1] > 1470){
+  CCW();
+  motor(pwm, rotPower);
+  Serial.print("CCW");
 }
-else{
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);
-  analogWrite(pwm2, 0);
+else if (1430 < rc_values[RC_CH1] < 1470){
+  brake();
+  Serial.print("BRAKE");
 }
 
 Serial.print("\t"); Serial.print("Throttle Direction: ");
 
+
 if(rc_values[RC_CH2] < 1500){
   motorThrust.write(throtPower);
-  Serial.print("Reverse");
+  Serial.print("REVERSE");
 }
 else if(rc_values[RC_CH2] > 1500){
   motorThrust.write(throtPower);
-  Serial.print("Forward");
+  Serial.print("FORWARD");
 }
 
 Serial.println();
+
 }

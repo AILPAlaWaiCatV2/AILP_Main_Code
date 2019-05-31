@@ -53,12 +53,12 @@ String splited[4];
  * String variables of desired and actual GPS coordinates
  */
 String coordinate[4] = {"stringDesireX", "stringDesireY", "stringActualX", "stringActualY"};
+
 /*
-String stringDesireX;
-String stringDesireY;
-String stringActualX;
-String stringActualY;
-*/
+ * Float array for holding the distance needed to get to the desired coordinate
+ * Organization is N, E, S, W
+ */
+double distance[4];
 
 /*
  * This function takes the desired and actual gps coordinates and returns the difference based compass and feet 
@@ -73,16 +73,16 @@ double coordDif(double desireX, double desireY, double actualX, double actualY){
 
   Serial.println("Direction:");
 
-  if(totalChangeRawX > 0){
+  if(totalChangeRawX < 0){
     Serial.print("E: ");
-    Serial.print(totalChangeFeetX, 10);
+    Serial.print(abs(totalChangeFeetX), 10);
     Serial.print(", ");
     
-    travelEast = totalChangeFeetX;
+    travelEast = abs(totalChangeFeetX);
     
   }
   
-   else if(totalChangeRawX < 0){
+   else if(totalChangeRawX > 0){
     Serial.print("W: ");
     Serial.print(abs(totalChangeFeetX), 10);
     Serial.print(", ");
@@ -96,7 +96,7 @@ double coordDif(double desireX, double desireY, double actualX, double actualY){
     Serial.print(totalChangeFeetY, 10);
     Serial.println();
 
-    travelSouth = totalChangeFeetY;
+    travelSouth = abs(totalChangeFeetY);
     
   }
   
@@ -109,20 +109,21 @@ double coordDif(double desireX, double desireY, double actualX, double actualY){
     
   }
 
-  return travelEast;
-  return travelWest;
-  return travelSouth;
-  return travelNorth;
+  distance[0] = travelNorth;
+  distance[1] = travelEast;
+  distance[2] = travelSouth;
+  distance[3] = travelWest;
+
+  return distance[4];
 }
 
 /*
  * This function resets the data needed to travel so that the data being sent out is new and up to date 
  */
 void Reset(){
-  travelWest = 0;
-  travelEast = 0;
-  travelSouth = 0;
-  travelNorth = 0;
+  for(int i = 0; i < 4; i++){
+    distance[i] = 0;
+  }
 }
 
 /*
@@ -149,12 +150,7 @@ double getCoord(String coordinates){
   desireY = coordinate[1].toFloat();
   actualX = coordinate[2].toFloat();
   actualY = coordinate[3].toFloat();
-  
-  return desireX;
-  return desireY;
-  return actualX;
-  return actualY;
-  
+
 }
 
 /*
@@ -184,12 +180,21 @@ void loop() {
     
     getCoord(grabData);
     Serial.println("Return:");
-    Serial.print("DesiredX:");Serial.print(desireX, 5);Serial.print("\t");
-    Serial.print("DesiredY:");Serial.print(desireY, 5);Serial.print("\t");
-    Serial.print("ActualX:");Serial.print(actualX, 5);Serial.print("\t");
-    Serial.print("ActualY:");Serial.print(actualY, 5);Serial.print("\t");Serial.println();
+    Serial.print("DesiredX:");Serial.print(desireX, 6);Serial.print("\t");
+    Serial.print("DesiredY:");Serial.print(desireY, 6);Serial.print("\t");
+    Serial.print("ActualX:");Serial.print(actualX, 6);Serial.print("\t");
+    Serial.print("ActualY:");Serial.print(actualY, 6);Serial.print("\t");Serial.println();
     
     coordDif(desireX, desireY, actualX, actualY);
+    
+    Serial.print("Distance Array: ");
+    
+    for(int i = 0; i < 4; i++){
+      Serial.print(distance[i]);
+      Serial.print(" ");
+    }
+    Serial.println();
+    
     Reset();
     
   }

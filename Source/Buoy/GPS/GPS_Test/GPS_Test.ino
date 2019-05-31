@@ -1,7 +1,7 @@
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 
-static const int RXPin = 7, TXPin = 6;
+static const int RXPin = 4, TXPin = 3;
 static const uint32_t GPSBaud = 9600;
 
 // The TinyGPS++ object

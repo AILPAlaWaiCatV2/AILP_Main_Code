@@ -1,9 +1,9 @@
 /**
  * Created By: Shane Matsushima 
  * Date: 12/5/2018
- * For: Data Sending from Buoy (Advanced Innovation and Leadership Project)
+ * For: Data Sending from CAT (Advanced Innovation and Leadership Project)
  * Description:
- *  Used for Sending data from the Buoy to the main hub where the NodeMCU is located
+ *  Used for Sending data from the CAT to the main hub where the NodeMCU is located
  *  Data being transmited consists of pH, temperature, conductivity, and dissolved oxygen
  *  The use of a LoRa, Tentacle Shield, and Arduino Uno is used for this code. This code incorporates the continuous reading
  *  code from White Box and incorporates LoRa. 
@@ -16,7 +16,6 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 #include <SoftwareSerial.h>
-#include <TinyGPS++.h>
 
 //Declaration of pins used for the LoRa 
 #define RFM95_CS 4
@@ -32,8 +31,8 @@
 #define LED 13
 
 
-//Change based on buoy name: (A, I, L, P) 
-char buoyID[1] = "A";
+//Change based on Cat Name 
+char catID[1] = "C";
 
 static const int RXPin = 5, TXPin = 6;
 static const uint32_t GPSBaud = 9600;
@@ -49,15 +48,13 @@ byte in_char = 0;
 // Change to 434.0 or other frequency, must match RX's freq!
 #define RF95_FREQ 915.0
 
-int channel_ids[] = {102, 97, 99, 100};
+int channel_ids[] = {102, 100, 99, 97};
 
-char *channel_names[] = {"RTD", "DO", "PH", "EC"}; 
+char *channel_names[] = {"RTD", "EC", "PH", "DO"}; 
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-// The TinyGPS++ object
-TinyGPSPlus gps;
 
 // The serial connection to the GPS device
 SoftwareSerial ss(RXPin, TXPin);
@@ -115,6 +112,8 @@ void setup()
 
 void loop() {
 
+  void gpsSend();
+
   //cycles through I2C channels grabbing sensor data from the Tentacle
   for (int channel = 0; channel < TOTAL_CIRCUITS; channel++) 
   {   
@@ -158,7 +157,7 @@ void loop() {
       char tempNumChar[6];
       tempNumStr.toCharArray(tempNumChar, 6);
       char radiopacketTemp[8] = " T     ";
-      radiopacketTemp[0] = buoyID[0];
+      radiopacketTemp[0] = catID[0];
       for(int i = 2; i <= 6;)
       {
         radiopacketTemp[i] = tempNumChar[i - 2];
@@ -178,7 +177,7 @@ void loop() {
       char disNumChar[6];
       disNumStr.toCharArray(disNumChar, 6);
       char radiopacketDis[8] = " D     ";
-      radiopacketDis[0] = buoyID[0];
+      radiopacketDis[0] = catID[0];
       for(int x = 2; x<=6;)
       {
         radiopacketDis[x] = disNumChar[x - 2];
@@ -197,7 +196,7 @@ void loop() {
     char pHNumChar[6];
     pHNumStr.toCharArray(pHNumChar, 6);
     char radiopacketpH[8] = " P     ";
-    radiopacketpH[0] = buoyID[0];
+    radiopacketpH[0] = catID[0];
     for(int y = 2; y <= 6;){
       radiopacketpH[y] = pHNumChar[y - 2];
       y++;
@@ -214,7 +213,7 @@ void loop() {
     char conNumChar[6];
     conNumStr.toCharArray(conNumChar, 6);
     char radiopacketCon[8] = " C     ";
-    radiopacketCon[0] = buoyID[0];
+    radiopacketCon[0] = catID[0];
     for(int c = 2; c <= 6;){
       radiopacketCon[c] = conNumChar[c - 2];
       c++;
@@ -230,31 +229,34 @@ void loop() {
 
 } // void loop
 
-
-float sendLat(){
-      gps.encode(ss.read());
-        String latNumStr = String(gps.location.lat(), 6);
-      char latNumChar [11];
-      latNumStr.toCharArray(latNumChar, 11);
-      char radiopacketLat[12] = "X         ";
-      for(int l = 1; l <= 11; l++){
-        radiopacketLat[l] = latNumChar[l - 1];
-      }
-      radiopacketLat[11] = 0;
-      rf95.send(radiopacketLat, 12);
-      Serial.println(radiopacketLat);
-}
-
-float sendLon(){
-      gps.encode(ss.read());
-      String lngNumStr = String(gps.location.lng(), 6);
-      char lngNumChar [11];
-      lngNumStr.toCharArray(lngNumChar, 11);
-      char radiopacketLng[12] = "Y         ";
-      for(int l = 1; l <= 11; l++){
-        radiopacketLng[l] = lngNumChar[l - 1];
-      }
-      radiopacketLng[11] = 0;
-      rf95.send(radiopacketLng, 12);
-      Serial.println(radiopacketLng);
+void gpsSend(){
+  if(ss.read() > 0){
+    char lon[25];
+    char lati[25];
+    String xCoord;
+    String yCoord;
+    String grabData = ss.readString();
+    Serial.println(grabData);
+    xCoord = grabData.substring(1,25);
+    yCoord = grabData.substring(26, 50);
+    xCoord.toCharArray(lon, 25);
+    yCoord.toCharArray(lati, 25);
+    char radiopacketLon[27];
+    char radiopacketLat[27];
+    radiopacketLon[0] = catID[0];
+    radiopacketLat[0] = catID[0];
+    radiopacketLon[1] = 'X';
+    radiopacketLat[1] = 'Y';
+    for(int l = 2; l <= 25;){
+      radiopacketLon[l] = lon[l - 2];
+      radiopacketLat[l] = lati[l - 2];
+      l++;
+    }
+    radiopacketLon[26] = 0;
+    radiopacketLat[26] = 0;
+    rf95.send(radiopacketLon, 26);
+    rf95.send(radiopacketLat, 26);
+    Serial.println(radiopacketLon);
+    Serial.println(radiopacketLat);
+  }
 }

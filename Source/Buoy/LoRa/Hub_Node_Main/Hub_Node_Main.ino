@@ -6,6 +6,12 @@
 #define ID2 "5bef2e8bc03f97550c8b5d63" //pH
 #define ID3 "5bef2e98c03f97558e49cc37" //Conductivity
 #define ID4 "5bef2eadc03f97558e49cc48" //Dissolved Oxygen
+#define CAT1 "5cef0ad1c03f974a5b02f650" //temp
+#define CAT2 "5cef0adec03f974ad76dc4d4" //pH
+#define CAT3 "5cef0b1cc03f974ad76dc4e4" //Conductivity
+#define CAT4 "5cef0ae3c03f974ad76dc4d5" //Dissolved Oxygen
+#define CAT5 "5cef1f97c03f975bc75a2acb" //Lon
+#define CAT6 "5cef1f9dc03f975c5fc704a3" //Lat
 #define TOKEN "A1E-OIKQ1rDhI0vq6NgdbDu1B3YOmWDrZN"
 
 Ubidots client1(TOKEN);
@@ -36,11 +42,12 @@ void loop() {
 
     //-------Buoy A---------
   
-    if(recVal[0] == "A"){
+    if(recVal[0] == 'A'){
       if(recVal[1] == 'T'){
         String tempRaw = String(recVal);
-        String tempSend = tempRaw.substring(1,8);
+        String tempSend = tempRaw.substring(2,8);
         float tempValSend = tempSend.toFloat();
+        Serial.print("Sending Temp: ");
         Serial.println(tempValSend);
         client1.add(ID1, tempValSend);
         client1.sendAll();
@@ -48,26 +55,30 @@ void loop() {
       
       if(recVal[1] == 'P'){
         String phRaw = String(recVal);
-        String phSend = phRaw.substring(1,8);
+        String phSend = phRaw.substring(2,8);
         float phValSend = phSend.toFloat();
-        //Serial.println(phValSend);
+        Serial.print("Sending pH: ");
+        Serial.println(phValSend);
         client1.add(ID2, phValSend);
         client1.sendAll();
         }
 
       if(recVal[1] == 'D'){
         String dRaw = String(recVal);
-        String dSend = dRaw.substring(1,8);
+        String dSend = dRaw.substring(2,8);
         float dValSend = dSend.toFloat();
-        //Serial.println(dValSend);
+        Serial.print("Sending DO: ");
+        Serial.println(dValSend);
         client1.add(ID4, dValSend);
         client1.sendAll();
         }
     
       if(recVal[1] == 'C'){
         String cRaw = String(recVal);
-        String cSend = cRaw.substring(1,8);
+        String cSend = cRaw.substring(2,8);
         float cValSend = cSend.toFloat();
+        Serial.print("Sending Temp: ");
+        Serial.println(cValSend);
         client1.add(ID3, cValSend);
         client1.sendAll();
       }
@@ -75,7 +86,7 @@ void loop() {
 
         //-------Buoy I---------
   
-    if(recVal[0] == "I"){
+    if(recVal[0] == 'I'){
       if(recVal[1] == 'T'){
         String tempRaw = String(recVal);
         String tempSend = tempRaw.substring(1,8);
@@ -114,7 +125,7 @@ void loop() {
 
         //-------Buoy L---------
   
-    if(recVal[0] == "L"){
+    if(recVal[0] == 'L'){
       if(recVal[1] == 'T'){
         String tempRaw = String(recVal);
         String tempSend = tempRaw.substring(1,8);
@@ -153,7 +164,7 @@ void loop() {
 
         //-------Buoy P---------
   
-    if(recVal[0] == "P"){
+    if(recVal[0] == 'P'){
       if(recVal[1] == 'T'){
         String tempRaw = String(recVal);
         String tempSend = tempRaw.substring(1,8);
@@ -189,5 +200,59 @@ void loop() {
         client1.sendAll();
       }
     }
+
+        //------CAT-------
+   if(recVal[0] == 'C'){
+     if(recVal[1] == 'T'){
+        String tempRaw = String(recVal);
+        String tempSend = tempRaw.substring(1,8);
+        float tempValSend = tempSend.toFloat();
+        Serial.println(tempValSend);
+        client1.add(CAT1, tempValSend);
+        client1.sendAll();      
+      }
+
+     if(recVal[1] == 'P'){
+        String phRaw = String(recVal);
+        String phSend = phRaw.substring(1,8);
+        float phValSend = phSend.toFloat();
+        //Serial.println(phValSend);
+        client1.add(CAT2, phValSend);
+        client1.sendAll();      
+     }
+
+     if(recVal[1] == 'D'){
+        String dRaw = String(recVal);
+        String dSend = dRaw.substring(1,8);
+        float dValSend = dSend.toFloat();
+        //Serial.println(dValSend);
+        client1.add(CAT3, dValSend);
+        client1.sendAll();      
+     }
+
+     if(recVal[1] == 'C'){
+        String cRaw = String(recVal);
+        String cSend = cRaw.substring(1,8);
+        float cValSend = cSend.toFloat();
+        client1.add(CAT4, cValSend);
+        client1.sendAll();      
+     }
+
+     if(recVal[1] == 'X'){
+        String xRaw = String(recVal);
+        String xSend = xRaw.substring(1,25);
+        float xValSend = xSend.toFloat();
+        client1.add(CAT5, xValSend);
+        client1.sendAll();
+     }
+
+     if(recVal[1] == 'Y'){
+        String yRaw = String(recVal);
+        String ySend = yRaw.substring(1,25);
+        float yValSend = ySend.toFloat();
+        client1.add(CAT6, yValSend);
+        client1.sendAll();
+     }
+   }
   }
 }
