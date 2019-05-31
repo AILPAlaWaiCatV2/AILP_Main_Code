@@ -8,29 +8,29 @@ This section describes the materials and software needed to create this project.
 ### Materials Needd
 These are the supplies needed to create this project:
 #### Boards
-* [Arduino Uno Board]
-* [Altas Scientific Tentacle Shiel]
-* [LoRa RFM95 Transceiver]
-* [SparkFun Monster Moto Shield]
+* Arduino Uno Board
+* Altas Scientific Tentacle Shiel
+* LoRa RFM95 Transceiver
+* SparkFun Monster Moto Shield
 #### Sensors
-* [Atlas Temperature Sensor]
-* [Atlas Temperature Circuit Chip]
-* [Atlas pH Sensor]
-* [Atlas pH Circuit Chip]
-* [Altas Dissolved Oxygen Sensor]
-* [Atlas Dissolved Oxygen Circuit Chip]
-* [Atlas Conductivity Sensor]
-* [Altas Conductivity Circuit Chip]
+* Atlas Temperature Sensor
+* Atlas Temperature Circuit Chip
+* Atlas pH Sensor
+* Atlas pH Circuit Chip
+* Altas Dissolved Oxygen Sensor
+* Atlas Dissolved Oxygen Circuit Chip
+* Atlas Conductivity Sensor
+* Altas Conductivity Circuit Chip
 #### Motors
-* [BlueRobotics ESC (Electronic Servo Controller)]
-* [Blue Robotics Thruster]
-* [ServoCity Motor]
+* BlueRobotics ESC (Electronic Servo Controller)
+* Blue Robotics Thruster
+* ServoCity Motor
 #### Buoy
-* [Buoy Housing]
-* [Buoy Electronics Plate]
+* Buoy Housing
+* Buoy Electronics Plate
 #### Receiver Hub
-* [NodeMCU]
-* [LoRa Feather]
+* NodeMCU
+* LoRa Feather
 
 ### Prerequisites
 The prerequisities for this project consist of libraries, an IDE (Integrated Development Enviroment), and a website account that will be used to hold the data coming from the mounted monitoring system. The project also requires that the electronics (more specifically the NodeMCU) has a WiFi network to connect to.
@@ -104,7 +104,41 @@ All the code that will be going on the electronics have been premade. Varaibles 
 
 ### Uploading Code
 Once the code is open in the IDE, the following stpes will showcase how to upload code to each board 
+#### Arduino Uno Sensor Collection and LoRa Transmitting Upload and Buoy Manual Motor Control Upload
+*Note Before uploading code, check the code comments to see what variables need to be change* 
+* Go to Tools -> Boards and scroll down untill Arduin Uno shows up
+* Click on that board 
+* Plug in the Arduino via USB to USB data cable into the computer
+* Go to Tools -> Comm Ports and click on port the board is plugged into 
+* Press the upload button on the top left corner of the IDE
+*Note: uploading to the board may take time*
+#### LoRa Feather 32u4 Receiving Upload
+*Note Before uploading code, check the code comments to see what variables need to be change* 
+* Go to Tools -> Boards and scroll down untill Feather 32u4 shows up
+* Click on that board 
+* Plug in the Feather via Micro USB to USB data cable into the computer
+* Go to Tools -> Comm Ports and click on port the board is plugged into 
+* Press the upload button on the top left corner of the IDE
+*Note: uploading to the board may take time*
+#### NodeMCU Sending Upload
+##### Changing Variables in Code
+*Note Before uploading code, check the code comments to see what variables need to be change* 
+To find the Token for the code:
+* Go to Ubidots and click on your profile
+* Click on API Credentials
+* Copy the Token and place it into the respected area of the code
+To find the variable ID for the code:
+* Go to Devices -> Variables
+* Click on the varaible "temperature" and click on the i icon
+* Copy the Variable ID and place it into the respected area of the code
+Replace the WIFIUSERNAME and WIFIPASSWORD with the network security settings that the NodemCU will be connecting to
+##### Changing Devices and Uploading Code
+Once the variables have been changed to it's respected ID's, the following will help upload the code to the NodeMCU
+* Go to Tools -> Boards -> 1.0 NodeMCU and click on that device
+* Plug in the NodeMCU via Micro USB to USB into a Comm Port
+* Select the Comm Port the device is in and click the upload button on the top right of the IDE
 
+### Once these steps are completed, your project is ready to be run. 
 
 
 
