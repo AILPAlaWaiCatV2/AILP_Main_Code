@@ -76,10 +76,10 @@ Once an account is created, there will be a blank page with three diffrent tabs.
 Once the device and variable is created, Ubidots is setup. But will be reffered to in order to input data into the code to allow the NodeMCU to send data over to Ubidots and for Ubidots to send data over to google sheets. 
 *Note: Ubidots is based on a credit system which means more than one device does cost credits being used. 
 
-###Setting up GoogleSheets
+### Setting up GoogleSheets
 Create or log into a Google account that has access to Google Sheets. CLick on the Google Sheets icon and create a new document. Create five tabs that are named after each sensor being used (temperature, pH, conductivity, dissolved oxygen, and GPS). 
 
-##Coding
+## Coding
 ### Loading the Code
 All the code that will be going on the electronics have been premade. Varaibles and changes that are needed from the user is signalled in the comments of the code. To load the main code, follow these steps so that we can upload the code to the electronics.
 #### Buoy Sensor and Transmitting Code
