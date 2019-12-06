@@ -2,33 +2,35 @@
 
 #include <UbidotsMicroESP8266.h>
 
-#define ID1 "5bef2e86c03f97550c8b5d5f" //temp
-#define ID2 "5bef2e8bc03f97550c8b5d63" //pH
-#define ID3 "5bef2e98c03f97558e49cc37" //Conductivity
-#define ID4 "5bef2eadc03f97558e49cc48" //Dissolved Oxygen
-#define CAT1 "5cef0ad1c03f974a5b02f650" //temp
-#define CAT2 "5cef0adec03f974ad76dc4d4" //pH
-#define CAT3 "5cef0b1cc03f974ad76dc4e4" //Conductivity
-#define CAT4 "5cef0ae3c03f974ad76dc4d5" //Dissolved Oxygen
-#define CAT5 "5cef1f97c03f975bc75a2acb" //Lon
-#define CAT6 "5cef1f9dc03f975c5fc704a3" //Lat
-#define TOKEN "A1E-OIKQ1rDhI0vq6NgdbDu1B3YOmWDrZN"
+#define ID1 "Place Variable ID here" //temp
+#define ID2 "Place Variable ID here" //pH
+#define ID3 "Place Variable ID here" //Conductivity
+#define ID4 "Place Variable ID here" //Dissolved Oxygen
+#define CAT1 "Place Variable ID here" //temp
+#define CAT2 "Place Variable ID here" //pH
+#define CAT3 "Place Variable ID here" //Conductivity
+#define CAT4 "Place Variable ID here" //Dissolved Oxygen
+#define CAT5 "Place Variable ID here" //Lon
+#define CAT6 "Place Variable ID here" //Lat
+#define TOKEN "Place Token Here"
 
 Ubidots client1(TOKEN);
 
 //WiFi credentials
-#define WIFISSID "Palila"
-#define PASSWORD "io71redbird51"
+#define WIFISSID "Wifi Name"
+#define PASSWORD "Wifi Password"
 
-#define NAME "Iolani MonKit 1"
+#define NAME "Device Name"
 
 
 String sendvalue;
 char recVal[9];
+
+
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
-//while(!Serial){;}
+
 client1.wifiConnection(WIFISSID, PASSWORD);
 
 }
