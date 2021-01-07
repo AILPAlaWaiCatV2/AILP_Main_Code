@@ -127,10 +127,8 @@ void loop() {
   Serial.print("CH3:"); Serial.print(rc_values[RC_CH3]); Serial.print("\t");
   Serial.print("CH4:"); Serial.print(rc_values[RC_CH4]); Serial.print("\t");
   Serial.print("Rotate Direction: ");
-  
-//figures out direction of the joysticks and runs the motors in the appropriate direction based on joystick position
- 
 
+//figures out direction of the joysticks and runs the motors in the appropriate direction based on joystick position
  if(rc_values[RC_CH1 ]< 1430){
   CW();
   motor(pwm, rotPower);
